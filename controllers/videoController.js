@@ -86,7 +86,7 @@ export const getEditVideo = async (req, res) => {
 export const postEditVideo = async (req, res) => {
   const {
     params: { id },
-    body: { title, description },
+    body: { title, description }
   } = req;
   try {
     await Video.findOneAndUpdate({ _id: id }, { title, description });
