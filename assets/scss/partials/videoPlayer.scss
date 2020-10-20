@@ -5,6 +5,11 @@
       opacity: 1;
     }
   }
+  &.hidden:hover {
+    .videoPlayer__controls {
+      opacity: 0;
+    }
+  }
   video {
     width: 100%;
     max-width: 100%;

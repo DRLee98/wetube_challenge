@@ -9,6 +9,8 @@ const currentTime = document.getElementById("currentTime");
 const totalTime = document.getElementById("totalTime");
 const volumeRange = document.getElementById("jsVolume");
 
+let timeOut;
+
 const registerView = () => {
   const videoId = window.location.href.split("/videos/")[1];
   fetch(`/api/${videoId}/view`, {
@@ -20,13 +22,17 @@ function handlePlayClick() {
   if (videoPlayer.paused) {
     videoPlayer.play();
     playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-    volumeRange.value = videoPlayer.volume;
   } else {
     videoPlayer.pause();
     playBtn.innerHTML = '<i class="fas fa-play"></i>';
-    volumeRange.value = 0;
     }
-}
+};
+
+const handleKeyPlay = (e) => {
+  if (e.code === "Space") {
+    handlePlayClick();
+  }
+};
 
 function handleVolumeClick() {
 if (videoPlayer.muted) {
@@ -117,14 +123,24 @@ function handleDrag(event) {
   }
 }
 
+const hiddenClass = () => videoContainer.classList.add("hidden");
+
+const showPlayerBar = () => {
+  clearTimeout(timeOut);
+  videoContainer.classList.remove("hidden");
+  timeOut = setTimeout(hiddenClass, 2000);
+};
+
 function init() {
   videoPlayer.volume = volumeRange.value;
   playBtn.addEventListener("click", handlePlayClick);
+  window.addEventListener("keydown", handleKeyPlay);
   volumeBtn.addEventListener("click", handleVolumeClick);
   fullScrnBtn.addEventListener("click", goFullScreen);
   videoPlayer.addEventListener("loadedmetadata", setTotalTime);
   videoPlayer.addEventListener("ended", handleEnded);
   volumeRange.addEventListener("input", handleDrag);
+  videoContainer.addEventListener("mousemove", showPlayerBar);
 }
 
 if (videoContainer) {

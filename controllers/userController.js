@@ -10,9 +10,13 @@ export const postJoin = async (req, res, next) => {
   const {
     body: { name, email, password, password2 },
   } = req;
+  let user = await User.findOne({email})
   if (password !== password2) {
     res.status(400);
-    res.render("join", { pageTitle: "Join" });
+    res.render("join", { pageTitle: "Join", error: "Please confirm your verify password" });
+  } else if(user) {
+    res.status(400);
+    res.render("join", { pageTitle: "Join", error: "That email is taken. Try another." });
   } else {
     try {
       const user = await User({
@@ -23,17 +27,19 @@ export const postJoin = async (req, res, next) => {
       next();
     } catch (error) {
       console.log(error);
-      res.redirect(routes.home);
+      res.render("join", { pageTitle: "Join", error: "Unknown error" });  
     }
   }
 };
 
-export const getLogin = (req, res) =>
-  res.render("login", { pageTitle: "Log In" });
+export const getLogin = (req, res) =>{
+  const error = req.flash().error
+  res.render("login", { pageTitle: "Log In", error })};
 
 export const postLogin = passport.authenticate("local", {
   failureRedirect: routes.login,
   successRedirect: routes.home,
+  failureFlash: true
 });
 
 export const githubLogin = passport.authenticate("github");
@@ -116,7 +122,7 @@ export const userDetail = async (req, res) => {
   }
 };
 
-export const getEditProfile  = (req, res) => res.render("editProfile");
+export const getEditProfile  = (req, res) => res.render("editProfile", { pageTitle: "Edit Profile" });
 
 export const postEditProfile = async (req, res) => {
   const {
@@ -135,7 +141,7 @@ export const postEditProfile = async (req, res) => {
   }
 };
 
-export const getChangePassword  = (req, res) => res.render("changePassword");
+export const getChangePassword  = (req, res) => res.render("changePassword", { pageTitle: "changePassword"});
 
 export const postChangePassword = async (req, res) => {
   const {
@@ -144,13 +150,13 @@ export const postChangePassword = async (req, res) => {
   try {
     if (newPassword !== newPassword1) {
       res.status(400);
-      res.redirect(`/users/${routes.changePassword}`);
+      res.render("changePassword", { pageTitle: "changePassword", error: "Please confirm your verify password" });
       return;
     }
     await req.user.changePassword(oldPassword, newPassword);
     res.redirect(routes.me);
   } catch (error) {
     res.status(400);
-    res.redirect(`/users/${routes.changePassword}`);
+    res.render("changePassword", { pageTitle: "changePassword", error: "Please confirm your old password" });
   }
 };
