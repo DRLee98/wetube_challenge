@@ -73,15 +73,18 @@ export const videoDetail = async (req, res) => {
 export const getEditVideo = async (req, res) => {
   const {
     params: { id },
+    user: { id: userId }
   } = req;
   try {
     const video = await Video.findById(id);
-    if (video.creator !== req.user.id) {
+    console.log(video.creator, userId)
+    if (video.creator !== userId) {
       throw Error();
     } else {
       res.render("editVideo", { pageTitle: `Edit ${video.title}`, video });
     }
   } catch (error) {
+    console.log(error);
     res.redirect(routes.home);
   }
 };
