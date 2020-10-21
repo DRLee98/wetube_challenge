@@ -49,8 +49,8 @@
     "copyAll": "cp -R src/static build/static && cp -R src/views build/views",
     "build": "npm run build:assets && npm run build:server && npm run copyAll",
     "prebuild": "rm -rf build",
-    "start": "node build/init.js",
-    "prestart": "PRODUCTION=true npm run build"
+    "start": "PRODUCTION=true node build/init.js",
+    "prestart": "npm run build"
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
