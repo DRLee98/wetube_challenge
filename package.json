@@ -18,6 +18,7 @@
     "connect-flash": "^0.1.1",
     "connect-mongo": "^3.2.0",
     "cookie-parser": "^1.4.5",
+    "cross-env": "^7.0.2",
     "css-loader": "^4.3.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -40,22 +41,22 @@
     "postcss-loader": "^4.0.3",
     "pug": "^3.0.0",
     "sass-loader": "^10.0.2",
+    "shx": "^0.3.2",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
   },
   "scripts": {
     "dev:server": "nodemon --exec babel-node src/init.js --delay 2 --ignore '.scss' --ignore 'static' ",
-    "dev:assets": "cd src && WEBPACK_ENV=development webpack -w",
-    "build:assets": "cd src && WEBPACK_ENV=production webpack",
+    "dev:assets": "cd src && cross-env WEBPACK_ENV=development webpack -w",
+    "build:assets": "cd src && cross-env WEBPACK_ENV=production webpack",
     "build:server": "babel src --out-dir build --ignore 'src/assets','src/static','src/webpack.config.js'",
-    "copyAll": "cp -R src/static build/static && cp -R src/views build/views",
+    "copyAll": "shx cp -R src/static build/static && cp -R src/views build/views",
     "build": "npm run build:assets && npm run build:server && npm run copyAll",
     "prebuild": "rm -rf build",
     "start": "PRODUCTION=true node build/init.js",
-    "prestart": "npm run build"
+    "prestart": "shx npm run build"
   },
   "devDependencies": {
-    "cross-env": "^7.0.2",
     "eslint": "^7.10.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^6.12.0",
@@ -63,6 +64,5 @@
     "eslint-plugin-prettier": "^3.1.4",
     "nodemon": "^2.0.4",
     "prettier": "^2.1.2",
-    "shx": "^0.3.2"
   }
 }
