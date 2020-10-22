@@ -37,7 +37,7 @@ const handleKeyPlay = (e) => {
   }
 };
 
-function handleVolumeClick() {
+function handleVolumeClick() { 
 if (videoPlayer.muted) {
   videoPlayer.muted = false;
   volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
@@ -99,14 +99,14 @@ function getCurrentTime() {
 }
 
 async function setTotalTime() {
-  const blob = await fetch(videoPlayer.src).then(response => response.blob());
-  let duration = await getBlobDuration(blob);
-  console.log(duration)
-  if(duration <= 1){
-    duration = videoPlayer.duration
+  let duration = videoPlayer
+  if(isNaN(duration)){
+    const blob = await fetch(videoPlayer.src).then(response => response.blob());
+    duration = await getBlobDuration(blob);
   }
   const totalTimeString = formatDate(duration);
   totalTime.innerHTML = totalTimeString;
+  timeRange.max = Math.floor(duration);
 }
 
 function handleEnded() {
@@ -141,7 +141,6 @@ const showPlayerBar = () => {
 
 function init() {
   volumeRange.value = videoPlayer.volume;
-  timeRange.max = Math.floor(videoPlayer.duration);
   timeRange.value = videoPlayer.currentTime;
   playBtn.addEventListener("click", handlePlayClick);
   window.addEventListener("keydown", handleKeyPlay);

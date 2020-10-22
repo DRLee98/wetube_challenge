@@ -40,13 +40,8 @@
 		.videoPlayer__column:first-child {
 			display: flex;
 			align-items: center;
-			span {
+			div {
 				margin-right: 15px;
-			}
-			.time {
-				span {
-					margin: 0;
-				}
 			}
 		}
 		.volumeBtn {
