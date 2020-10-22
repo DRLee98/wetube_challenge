@@ -10,7 +10,7 @@ const totalTime = document.getElementById("totalTime");
 const volumeRange = document.getElementById("jsVolume");
 const timeRange = document.getElementById("jsPlayTime");
 
-let interval, timeOut;
+let interval; let timeOut;
 
 const registerView = () => {
   const videoId = window.location.href.split("/videos/")[1];
@@ -99,7 +99,7 @@ function getCurrentTime() {
 }
 
 async function setTotalTime() {
-  let duration = videoPlayer
+  let {duration} = videoPlayer;
   if(isNaN(duration)){
     const blob = await fetch(videoPlayer.src).then(response => response.blob());
     duration = await getBlobDuration(blob);
