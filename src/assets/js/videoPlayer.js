@@ -8,8 +8,9 @@ const fullScrnBtn = document.getElementById("jsFullScreen");
 const currentTime = document.getElementById("currentTime");
 const totalTime = document.getElementById("totalTime");
 const volumeRange = document.getElementById("jsVolume");
+const timeRange = document.getElementById("jsPlayTime");
 
-let timeOut;
+let interval, timeOut;
 
 const registerView = () => {
   const videoId = window.location.href.split("/videos/")[1];
@@ -22,9 +23,11 @@ function handlePlayClick() {
   if (videoPlayer.paused) {
     videoPlayer.play();
     playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+    interval = setInterval(getCurrentTime, 1000);
   } else {
     videoPlayer.pause();
     playBtn.innerHTML = '<i class="fas fa-play"></i>';
+    clearInterval(interval);
     }
 };
 
@@ -78,7 +81,6 @@ const formatDate = seconds => {
   let hours = Math.floor(secondsNumber / 3600);
   let minutes = Math.floor((secondsNumber - hours * 3600) / 60);
   let totalSeconds = secondsNumber - hours * 3600 - minutes * 60;
-
   if (hours < 10) {
     hours = `0${hours}`;
   }
@@ -93,6 +95,7 @@ const formatDate = seconds => {
 
 function getCurrentTime() {
   currentTime.innerHTML = formatDate(Math.floor(videoPlayer.currentTime));
+  timeRange.value = videoPlayer.currentTime;
 }
 
 async function setTotalTime() {
@@ -100,7 +103,6 @@ async function setTotalTime() {
   const duration = await getBlobDuration(blob);
   const totalTimeString = formatDate(duration);
   totalTime.innerHTML = totalTimeString;
-  setInterval(getCurrentTime, 1000);
 }
 
 function handleEnded() {
@@ -123,6 +125,8 @@ function handleDrag(event) {
   }
 }
 
+const handleTime = () => { videoPlayer.currentTime = timeRange.value };
+
 const hiddenClass = () => videoContainer.classList.add("hidden");
 
 const showPlayerBar = () => {
@@ -132,14 +136,19 @@ const showPlayerBar = () => {
 };
 
 function init() {
-  videoPlayer.volume = volumeRange.value;
+  volumeRange.value = videoPlayer.volume;
+  timeRange.max = volumeRange.duration;
+  timeRange.value = volumeRange.currentTime;
   playBtn.addEventListener("click", handlePlayClick);
   window.addEventListener("keydown", handleKeyPlay);
   volumeBtn.addEventListener("click", handleVolumeClick);
+  volumeBtn.addEventListener("mouseover", () => volumeBtn.classList.add("show"));
+  volumeBtn.addEventListener("mouseout", () => volumeBtn.classList.remove("show"));
   fullScrnBtn.addEventListener("click", goFullScreen);
   videoPlayer.addEventListener("loadedmetadata", setTotalTime);
   videoPlayer.addEventListener("ended", handleEnded);
   volumeRange.addEventListener("input", handleDrag);
+  timeRange.addEventListener("input", handleTime);
   videoContainer.addEventListener("mousemove", showPlayerBar);
 }
 
