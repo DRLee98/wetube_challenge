@@ -99,10 +99,10 @@ function getCurrentTime() {
 }
 
 async function setTotalTime() {
-  let duration
   const blob = await fetch(videoPlayer.src).then(response => response.blob());
-  duration = await getBlobDuration(blob);
-  if(duration === 0){
+  let duration = await getBlobDuration(blob);
+  console.log(duration)
+  if(duration <= 1){
     duration = videoPlayer.duration
   }
   const totalTimeString = formatDate(duration);
@@ -141,8 +141,8 @@ const showPlayerBar = () => {
 
 function init() {
   volumeRange.value = videoPlayer.volume;
-  timeRange.max = Math.floor(volumeRange.duration);
-  timeRange.value = volumeRange.currentTime;
+  timeRange.max = Math.floor(videoPlayer.duration);
+  timeRange.value = videoPlayer.currentTime;
   playBtn.addEventListener("click", handlePlayClick);
   window.addEventListener("keydown", handleKeyPlay);
   volumeBtn.addEventListener("click", handleVolumeClick);
