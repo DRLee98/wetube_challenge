@@ -1,4 +1,5 @@
 import routes from "../routes";
+import User from "../models/User";
 import Video from "../models/Video";
 import Comment from "../models/Comment";
 
@@ -60,8 +61,9 @@ export const videoDetail = async (req, res) => {
   } = req;
   try {
     const video = await Video.findById(id)
-      .populate("creator")
-      .populate("comments");
+      .populate("comments")
+      .populate("creator");
+    console.log(video)
     res.render("videoDetail", { pageTitle: video.title, video });
   } catch (error) {
     res.redirect(routes.home);
@@ -77,8 +79,7 @@ export const getEditVideo = async (req, res) => {
   } = req;
   try {
     const video = await Video.findById(id);
-    console.log(video.creator, userId)
-    if (video.creator !== userId) {
+    if (video.creator.toString() !== userId) {
       throw Error();
     } else {
       res.render("editVideo", { pageTitle: `Edit ${video.title}`, video });
@@ -143,15 +144,17 @@ export const postAddComment = async (req, res) => {
   const {
     params: { id },
     body: { comment },
-    user
   } = req;
   try {
     const video = await Video.findById(id);
+    const user = await User.findById(req.user.id);
     const newComment = await Comment.create({
       text: comment,
-      creator: user.id
+      creator: req.user.id
     });
+    user.comments.push(newComment.id);
     video.comments.push(newComment.id);
+    user.save();
     video.save();
   } catch (error) {
     res.status(400);
@@ -159,3 +162,7 @@ export const postAddComment = async (req, res) => {
     res.end();
   }
 };
+
+export const postRemoveComment = async (req, res) => {
+
+}

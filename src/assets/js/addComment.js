@@ -18,7 +18,11 @@ const addComment = comment => {
 };
 
 const sendComment = async comment => {
-  const videoId = window.location.href.split("/videos/")[1];
+  let videoId = window.location.href.split("/videos/")[1];
+  if(videoId.endsWith("?")){
+    const targetNum = videoId.indexOf("?")
+    videoId = videoId.substring(0, targetNum)
+  }
   const response = await axios({
     url: `/api/${videoId}/comment`,
     method: "POST",

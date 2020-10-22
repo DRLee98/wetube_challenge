@@ -32,7 +32,7 @@ block content
                 input(type="text", placeholder="Add a comment")
             ul.video__comments-list#jsCommentList
                 each comment in video.comments.reverse()
-                    li(id=comment.id)
+                    li#comment.id
                         .writer
                             img.writer-avatar(src=comment.creator.avatarUrl)
                             span.writer-name=comment.creator.name
