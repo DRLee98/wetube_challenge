@@ -89,10 +89,9 @@ const formatDate = seconds => {
   if (minutes < 10) {
     minutes = `0${minutes}`;
   }
-  if (seconds < 10) {
+  if (totalSeconds < 10) {
     totalSeconds = `0${totalSeconds}`;
   }
-  console.log(totalSeconds);
   return `${hours}:${minutes}:${totalSeconds}`;
 };
 
@@ -158,7 +157,7 @@ function init() {
   volume.addEventListener("mouseover", () => volume.classList.add("show"));
   volume.addEventListener("mouseout", () => volume.classList.remove("show"));
   fullScrnBtn.addEventListener("click", goFullScreen);
-  videoPlayer.addEventListener("durationchange", setTotalTime);
+  videoPlayer.addEventListener("canplay", setTotalTime);
   videoPlayer.addEventListener("ended", handleEnded);
   volumeRange.addEventListener("input", handleDrag);
   timeRange.addEventListener("input", handleTime);
