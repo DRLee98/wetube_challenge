@@ -41,10 +41,7 @@ block content
                         a(href=`/users/${comment.id}`)
                             img.writer-avatar(src=comment.creator.avatarUrl)
                         .comment
-                            if loggedUser && comment.creator.id === loggedUser.id
-                                span.writer-name me
-                            else
-                                span.writer-name=comment.creator.name
+                            span.writer-name=comment.creator.name
                             span=comment.text
                         if loggedUser && video.creator.id === loggedUser.id || loggedUser && comment.creator.id === loggedUser.id 
                             button

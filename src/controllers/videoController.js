@@ -149,12 +149,15 @@ export const postAddComment = async (req, res) => {
     const user = await User.findById(req.user.id);
     const newComment = await Comment.create({
       text: comment,
-      creator: req.user.id
+      creator: req.user.id,
+      video: video.id
     });
     user.comments.push(newComment.id);
     video.comments.push(newComment.id);
     user.save();
     video.save();
+    const sendComment = await Comment.findById(newComment.id).populate("creator");
+    res.json(sendComment);
   } catch (error) {
     res.status(400);
   } finally {
@@ -168,8 +171,17 @@ export const postRemoveComment = async (req, res) => {
     user
   } = req;
   try{
-    const comment = await Comment.findById(id)
-    console.log(comment);
+    const comment = await Comment.findById(id).populate("video").populate("creator");
+    if(user.id === comment.creator.id.toString() || user.id === comment.video.creator.toString()){
+      const { creator: { comments: userComments, id: userId }, video: { comments: videoComments, id: videoId } } = comment
+      const updateUser = userComments.filter(c => c.toString() !== id);
+      const updateVideo = videoComments.filter(c => c.toString() !== id);
+      await User.findByIdAndUpdate(userId, {comments: updateUser});
+      await Video.findByIdAndUpdate(videoId, {comments: updateVideo});
+      await Comment.findByIdAndRemove(id);
+    } else {
+      throw Error
+    }
   }catch(error){
     console.log(error);
     res.status(400);
