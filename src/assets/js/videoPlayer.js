@@ -106,7 +106,6 @@ async function setTotalTime() {
     const blob = await fetch(videoPlayer.src).then(response => response.blob());
     duration = await getBlobDuration(blob);
   }
-  console.log(duration);
   const totalTimeString = formatDate(duration);
   timeRange.max = Math.floor(duration);
   totalTime.innerHTML = totalTimeString;
@@ -149,6 +148,7 @@ const showPlayerBar = () => {
 };
 
 function init() {
+  setTotalTime();
   volumeRange.value = videoPlayer.volume;
   timeRange.value = videoPlayer.currentTime;
   playBtn.addEventListener("click", handlePlayClick);
@@ -157,7 +157,6 @@ function init() {
   volume.addEventListener("mouseover", () => volume.classList.add("show"));
   volume.addEventListener("mouseout", () => volume.classList.remove("show"));
   fullScrnBtn.addEventListener("click", goFullScreen);
-  videoPlayer.addEventListener("canplay", setTotalTime);
   videoPlayer.addEventListener("ended", handleEnded);
   volumeRange.addEventListener("input", handleDrag);
   timeRange.addEventListener("input", handleTime);
