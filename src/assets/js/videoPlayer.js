@@ -157,7 +157,7 @@ function init() {
   volume.addEventListener("mouseover", () => volume.classList.add("show"));
   volume.addEventListener("mouseout", () => volume.classList.remove("show"));
   fullScrnBtn.addEventListener("click", goFullScreen);
-  videoPlayer.addEventListener("load", setTotalTime);
+  videoPlayer.addEventListener("canplay", setTotalTime);
   videoPlayer.addEventListener("ended", handleEnded);
   volumeRange.addEventListener("input", handleDrag);
   timeRange.addEventListener("input", handleTime);
