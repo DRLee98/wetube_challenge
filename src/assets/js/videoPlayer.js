@@ -103,7 +103,7 @@ function getCurrentTime() {
 
 async function setTotalTime() {
   let {duration} = videoPlayer;
-  if(duration === NaN){
+  if(isNaN(duration)){
     const blob = await fetch(videoPlayer.src).then(response => response.blob());
     duration = await getBlobDuration(blob);
   }
