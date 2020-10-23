@@ -3,6 +3,7 @@ import getBlobDuration from "get-blob-duration";
 const videoContainer = document.getElementById("jsVideoPlayer");
 const videoPlayer = document.querySelector("#jsVideoPlayer video");
 const playBtn = document.getElementById("jsPlayButton");
+const volume = document.getElementById("jsVolumeBox");
 const volumeBtn = document.getElementById("jsVolumeBtn");
 const fullScrnBtn = document.getElementById("jsFullScreen");
 const currentTime = document.getElementById("currentTime");
@@ -37,14 +38,15 @@ const handleKeyPlay = (e) => {
   }
 };
 
-function handleVolumeClick() { 
-if (videoPlayer.muted) {
-  videoPlayer.muted = false;
-  volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-} else {
-  videoPlayer.muted = true;
-  volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+function handleVolumeClick() {
+  if (videoPlayer.muted) {
+    videoPlayer.muted = false;
+    volumeRange.value = videoPlayer.volume;
+  } else {
+    videoPlayer.muted = true;
+    volumeRange.value = 0;
   }
+  volumeSize();
 }
 
 function exitFullScreen() {
@@ -90,6 +92,7 @@ const formatDate = seconds => {
   if (seconds < 10) {
     totalSeconds = `0${totalSeconds}`;
   }
+  console.log(totalSeconds);
   return `${hours}:${minutes}:${totalSeconds}`;
 };
 
@@ -104,6 +107,7 @@ async function setTotalTime() {
     const blob = await fetch(videoPlayer.src).then(response => response.blob());
     duration = await getBlobDuration(blob);
   }
+  console.log(duration);
   const totalTimeString = formatDate(duration);
   timeRange.max = Math.floor(duration);
   totalTime.innerHTML = totalTimeString;
@@ -120,11 +124,17 @@ function handleDrag(event) {
     target: { value }
   } = event;
   videoPlayer.volume = value;
-  if (value >= 0.6) {
+  volumeSize();
+}
+
+function volumeSize(){
+  if(videoPlayer.muted){
+    volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+  } else if (videoPlayer.volume >= 0.7) {
     volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-  } else if (value >= 0.2) {
+  } else if (videoPlayer.volume >= 0.3) {
     volumeBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
-  } else {
+  } else  {
     volumeBtn.innerHTML = '<i class="fas fa-volume-off"></i>';
   }
 }
@@ -145,10 +155,10 @@ function init() {
   playBtn.addEventListener("click", handlePlayClick);
   window.addEventListener("keydown", handleKeyPlay);
   volumeBtn.addEventListener("click", handleVolumeClick);
-  volumeBtn.addEventListener("mouseover", () => volumeBtn.classList.add("show"));
-  volumeBtn.addEventListener("mouseout", () => volumeBtn.classList.remove("show"));
+  volume.addEventListener("mouseover", () => volume.classList.add("show"));
+  volume.addEventListener("mouseout", () => volume.classList.remove("show"));
   fullScrnBtn.addEventListener("click", goFullScreen);
-  videoPlayer.addEventListener("loadedmetadata", setTotalTime);
+  videoPlayer.addEventListener("durationchange", setTotalTime);
   videoPlayer.addEventListener("ended", handleEnded);
   volumeRange.addEventListener("input", handleDrag);
   timeRange.addEventListener("input", handleTime);

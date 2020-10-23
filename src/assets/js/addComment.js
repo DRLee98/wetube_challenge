@@ -4,15 +4,28 @@ const addCommentForm = document.getElementById("jsAddComment");
 const commentList = document.getElementById("jsCommentList");
 const commentNumber = document.getElementById("jsCommentNumber");
 
+let writerAvatar;
+
 const increaseNumber = () => {
   commentNumber.innerHTML = parseInt(commentNumber.innerHTML, 10) + 1;
 };
 
 const addComment = comment => {
   const li = document.createElement("li");
-  const span = document.createElement("span");
-  span.innerHTML = comment;
-  li.appendChild(span);
+  const img = document.createElement("img");
+  const commentBox = document.createElement("div");
+  const name = document.createElement("span");
+  const contents = document.createElement("span");
+  img.className = "writer-avatar";
+  commentBox.className = "comment";
+  name.className = "writer-name";
+  if(writerAvatar.src){
+    img.src = writerAvatar.src;
+  }
+  name.innerHTML = "me";
+  contents.innerHTML = comment;
+  commentBox.append(name, contents);
+  li.append(img, commentBox);
   commentList.prepend(li);
   increaseNumber();
 };
@@ -37,6 +50,7 @@ const sendComment = async comment => {
 
 const handleSubmit = event => {
   event.preventDefault();
+  writerAvatar = addCommentForm.querySelector("img");
   const commentInput = addCommentForm.querySelector("input");
   const comment = commentInput.value;
   sendComment(comment);

@@ -29,14 +29,23 @@ block content
                     span#jsCommentNumber=video.comments.length
                     |  comments
             form.add__comment#jsAddComment
-                input(type="text", placeholder="Add a comment")
+                if loggedUser
+                    img.writer-avatar(src=loggedUser.avatarUrl)
+                    input(type="text", placeholder="Add a comment")
+                else
+                    img.writer-avatar
+                    input(type="text", placeholder="Add a comment", disabled)
             ul.video__comments-list#jsCommentList
                 each comment in video.comments.reverse()
                     li(id=comment.id)
-                        .writer
+                        a(href=`/users/${comment.id}`)
                             img.writer-avatar(src=comment.creator.avatarUrl)
-                            span.writer-name=comment.creator.name
-                        span=comment.text
-                        if loggedUser && video.creator.id === loggedUser.id || comment.creator.id === loggedUser.id
-                            button#jsRemoveComment
-                                i.fas.fa-times
+                        .comment
+                            if loggedUser && comment.creator.id === loggedUser.id
+                                span.writer-name me
+                            else
+                                span.writer-name=comment.creator.name
+                            span=comment.text
+                        if loggedUser && video.creator.id === loggedUser.id || loggedUser && comment.creator.id === loggedUser.id 
+                            button
+                                i.fas.fa-times#jsRemoveComment

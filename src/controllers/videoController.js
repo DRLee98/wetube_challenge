@@ -61,9 +61,8 @@ export const videoDetail = async (req, res) => {
   } = req;
   try {
     const video = await Video.findById(id)
-      .populate("comments")
+      .populate({path: "comments" ,populate: {path: "creator"}})
       .populate("creator");
-    console.log(video)
     res.render("videoDetail", { pageTitle: video.title, video });
   } catch (error) {
     res.redirect(routes.home);
@@ -164,5 +163,17 @@ export const postAddComment = async (req, res) => {
 };
 
 export const postRemoveComment = async (req, res) => {
-
+  const {
+    params: { id },
+    user
+  } = req;
+  try{
+    const comment = await Comment.findById(id)
+    console.log(comment);
+  }catch(error){
+    console.log(error);
+    res.status(400);
+  }finally{
+    res.end();
+  }
 }

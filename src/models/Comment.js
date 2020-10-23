@@ -12,6 +12,10 @@ const CommentSchema = new mongoose.Schema({
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
+  },
+  video: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Video"
   }
 });
 
