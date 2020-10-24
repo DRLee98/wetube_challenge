@@ -1,0 +1,53 @@
+.errorMsg {
+	text-align: center;
+	font-size: 15px;
+	font-weight: 700;
+	color: #ba1414;
+	background-color: #ff737357;
+	border: 2px solid #ff8a8a;
+	border-radius: 10px;
+	padding: 10px;
+	margin-bottom: 20px;
+}
+
+.big-flash-msg {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	opacity: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #ffffff33;
+	font-size: 50px;
+	font-weight: 800;
+	animation: flashAnimation 3s ease-in-out forwards;
+}
+
+@keyframes flashAnimation {
+	0% {
+		display: none;
+	}
+	5% {
+		display: flex;
+		opacity: 0;
+	}
+	15% {
+		opacity: 1;
+	}
+	85% {
+		opacity: 1;
+	}
+	95% {
+		opacity: 0;
+	}
+	98% {
+		display: none;
+		z-index: 0;
+	}
+	100% {
+		z-index: -99;
+	}
+}

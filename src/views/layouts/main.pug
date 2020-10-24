@@ -5,6 +5,12 @@ html
         title #{pageTitle} | #{siteName}
         link(rel="stylesheet", href="/static/styles.css")
     body
+        if messages.success
+            .big-flash-msg.success
+                span=messages.success
+        else if messages.info
+            .big-flash-msg.info
+                span=messages.info
         include ../partials/header
         main
             block content

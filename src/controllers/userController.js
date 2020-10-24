@@ -10,13 +10,15 @@ export const postJoin = async (req, res, next) => {
   const {
     body: { name, email, password, password2 },
   } = req;
-  let user = await User.findOne({email})
+  const findUser = await User.findOne({email})
   if (password !== password2) {
+    req.flash("error", "Please confirm your verify password");
     res.status(400);
-    res.render("join", { pageTitle: "Join", error: "Please confirm your verify password" });
-  } else if(user) {
+    res.render("join", { pageTitle: "Join" });
+  } else if(findUser) {
+    req.flash("error", "That email is taken. Try another.");
     res.status(400);
-    res.render("join", { pageTitle: "Join", error: "That email is taken. Try another." });
+    res.render("join", { pageTitle: "Join" });
   } else {
     try {
       const user = await User({
@@ -27,22 +29,24 @@ export const postJoin = async (req, res, next) => {
       next();
     } catch (error) {
       console.log(error);
-      res.render("join", { pageTitle: "Join", error: "Unknown error" });  
     }
   }
 };
 
 export const getLogin = (req, res) =>{
-  const {error} = req.flash()
-  res.render("login", { pageTitle: "Log In", error })};
+  res.render("login", { pageTitle: "Log In" })};
 
 export const postLogin = passport.authenticate("local", {
   failureRedirect: routes.login,
   successRedirect: routes.home,
-  failureFlash: true
+  successFlash: "Welcome",
+  failureFlash: "Can't log in. Check email and/or password"
 });
 
-export const githubLogin = passport.authenticate("github");
+export const githubLogin = passport.authenticate("github", {
+  successFlash: "Welcome",
+  failureFlash: "Can't log in at this time"
+});
 
 export const githubLoginCallback = async (_, __, profile, cb) => {
   const {
@@ -71,7 +75,10 @@ export const postGithubLogin = (req, res) => {
   res.redirect(routes.home);
 };
 
-export const facebookLogin = passport.authenticate("facebook");
+export const facebookLogin = passport.authenticate("facebook", {
+  successFlash: "Welcome",
+  failureFlash: "Can't log in at this time"
+});
 
 export const facebookLoginCallback = async (_, __, profile, cb) => {
   const {
@@ -102,6 +109,7 @@ export const postFacebookLogin = (req, res) => {
 };
 
 export const logout = (req, res) => {
+  req.flash("info", "bye bye");
   req.logout();
   res.redirect(routes.home);
 };
@@ -119,6 +127,7 @@ export const userDetail = async (req, res) => {
     const user = await User.findById(id).populate("videos");
     res.render("userDetail", { pageTitle: "User Detail", user });
   } catch (error) {
+    req.flash("error", "User not found");
     res.redirect(routes.home);
   }
 };
@@ -136,7 +145,8 @@ export const postEditProfile = async (req, res) => {
       email,
       avatarUrl: file ? file.location : req.user.avatarUrl
     });
-    res.redirect(`/users/${routes.me}`);
+    req.flash("success", "Profile updated");
+    res.redirect(`/users${routes.me}`);
   } catch (error) {
     res.redirect(routes.editProfile);
   }
@@ -150,14 +160,16 @@ export const postChangePassword = async (req, res) => {
   } = req;
   try {
     if (newPassword !== newPassword1) {
+      req.flash("error", "Please confirm your verify password");
       res.status(400);
-      res.render("changePassword", { pageTitle: "changePassword", error: "Please confirm your verify password" });
+      res.redirect(`/users${routes.changePassword}`);
       return;
     }
     await req.user.changePassword(oldPassword, newPassword);
     res.redirect(routes.me);
   } catch (error) {
+    req.flash("error", "Can't change password");
     res.status(400);
-    res.render("changePassword", { pageTitle: "changePassword", error: "Please confirm your old password" });
+    res.redirect(`/users${routes.changePassword}`);
   }
 };

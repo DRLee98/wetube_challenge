@@ -8,4 +8,6 @@ block content
                 input(type="file", id="avatar", name="avatar", accept="image/*")
             input(type="text", placeholder="Name", name="name", value=loggedUser.name)
             input(type="email", placeholder="Email", name="email", value=loggedUser.email, readonly)
+            if messages.error
+                .errorMsg=messages.error
             input(type="submit", value="Update Profile")
